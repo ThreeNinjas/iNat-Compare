@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>iNaturalist Compare Places</title>
+    <style type="text/css">
+        body {
+            background-color: #2b3140;
+            color: #6c83b2;
+        }
+
+        .creature {
+            border: 1px solid black;
+            margin: 10px;
+            padding: 10px;
+            color: #8190af
+        }
+
+        .creature h2 {
+            margin: 5px;
+        }
+
+        #content {
+            width: 800px;
+            margin: 0 auto;
+        }
+
+        #loader {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            margin: 20px;
+            /* Or specify a height */
+        }
+    </style>
+
+</head>
+
+<body>
+    <div id="content">
+        <form id="search-form">
+            <input type="text" id="here" placeholder="Here">
+            <input type="text" id="there" placeholder="There">
+            <button type="submit">Compare</button>
+        </form>
+        <div id="loader"><img src="images/giphy.webp" /></div>
+        <div id="total"></div>
+        <div id="creature-container"></div>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const loader = document.getElementById('loader');
+            const searchForm = document.getElementById('search-form');
+            const creatureContainer = document.getElementById('creature-container');
+            const total = document.getElementById('total');
+
+            loader.style.display = 'none';
+
+            searchForm.addEventListener('submit', function (event) {
+                event.preventDefault();
+
+                loader.style.display = 'flex';
+                creatureContainer.innerHTML = '';
+                total.innerHTML = '';
+
+                let here = new URL(document.getElementById('here').value);
+                let there = new URL(document.getElementById('there').value);
+                here = here.search.substring(1);
+                there = there.search.substring(1);
+
+                console.log('Loading the guys');
+
+                let htmlContent = '';
+
+                let url = 'http://127.0.0.1:3000/compare-creatures/' + here + '/' + there;
+                console.log(url);
+                fetch(url)
+                    .then(response => response.json())
+                    .then(creatures => {
+                        console.log('The guys are loaded!');
+
+                        loader.style.display = 'none';
+                        total.innerHTML = '<h2>' + creatures.length + ' Results</h2>';
+
+                        creatures.forEach(creature => {
+                            htmlContent += `
+                        <div class="creature">`;
+                            if (creature.common_name) {
+                                htmlContent += `
+                            <h2>${creature.common_name}</h2>
+                            <p><i>${creature.scientific_name}</i></p>
+                    `;
+                            } else {
+                                htmlContent += `
+                            <h2><i>${creature.scientific_name}</i></h2>
+                            `;
+                            }
+                            htmlContent += `
+                            <img src="${creature.image_url}" alt="${creature.common_name}">
+                            </div>
+                        `;
+
+                        });
+                        creatureContainer.innerHTML = htmlContent;
+                    });
+            })
+        })
+    </script>
+</body>
+
+</html>
