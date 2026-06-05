@@ -73,11 +73,13 @@
                 here = here.search.substring(1);
                 there = there.search.substring(1);
 
+                //https://www.inaturalist.org/observations?nelat=29.9268581&nelng=-90.00795199999999&swlat=29.847849&swlng=-90.0458979
+
                 console.log('Loading the guys');
 
                 let htmlContent = '';
 
-                let url = 'http://127.0.0.1:3000/compare-creatures/' + here + '/' + there;
+                let url = 'http://199.19.74.165:3000/compare-creatures/' + here + '/' + there;
                 console.log(url);
                 fetch(url)
                     .then(response => response.json())
