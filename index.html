@@ -10,6 +10,10 @@
             color: #6c83b2;
         }
 
+        .instructions {
+            color: #9eb0d4;
+        }
+
         .creature {
             border: 1px solid black;
             margin: 10px;
@@ -44,6 +48,7 @@
 <body>
     <div id="content">
         <form id="search-form">
+            <div class="instructions">Enter two zip codes to compare: </div>
             <input type="text" id="here" placeholder="Here">
             <input type="text" id="there" placeholder="There">
             <button type="submit">Compare</button>
@@ -53,7 +58,7 @@
         <div id="creature-container"></div>
     </div>
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", function () { 
             const loader = document.getElementById('loader');
             const searchForm = document.getElementById('search-form');
             const creatureContainer = document.getElementById('creature-container');
@@ -68,15 +73,13 @@
                 creatureContainer.innerHTML = '';
                 total.innerHTML = '';
 
-                let here = new URL(document.getElementById('here').value);
-                let there = new URL(document.getElementById('there').value);
-                here = here.search.substring(1);
-                there = there.search.substring(1);
+                //let here = new URL(document.getElementById('here').value);
+                //let there = new URL(document.getElementById('there').value);
+                //here = here.search.substring(1);
+                //there = there.search.substring(1);
 
-                //https://www.inaturalist.org/observations?nelat=29.9268581&nelng=-90.00795199999999&swlat=29.847849&swlng=-90.0458979
-
-                console.log('Loading the guys');
-
+                let here = document.getElementById('here').value;
+                let there = document.getElementById('there').value;
                 let htmlContent = '';
 
                 let url = 'http://199.19.74.165:3000/compare-creatures/' + here + '/' + there;
@@ -112,6 +115,10 @@
                     });
             })
         })
+
+        async function getCoordinatesFromZip(zip) {
+
+        }
     </script>
 </body>
 
