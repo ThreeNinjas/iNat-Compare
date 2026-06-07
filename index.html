@@ -10,6 +10,10 @@
             color: #6c83b2;
         }
 
+        .instructions {
+            color: #9eb0d4;
+        }
+
         .creature {
             border: 1px solid black;
             margin: 10px;
@@ -44,8 +48,23 @@
 <body>
     <div id="content">
         <form id="search-form">
+            <div class="instructions">Enter two zip codes to compare: </div>
             <input type="text" id="here" placeholder="Here">
             <input type="text" id="there" placeholder="There">
+            <div>
+                <div><label for="categories">Search Only These Categories:</label></div>
+                <input type="checkbox" name="categories[]" value="Aves"/>Birds<br />
+                <input type="checkbox" name="categories[]" value="Plantae"/>Plants<br />
+                <input type="checkbox" name="categories[]" value="Amphibia"/>Amphibians<br />
+                <input type="checkbox" name="categories[]" value="Reptilia"/>Reptiles<br />
+                <input type="checkbox" name="categories[]" value="Mammalia"/>Mammals<br />
+                <input type="checkbox" name="categories[]" value="Actinopterygii"/>Fishes<br />
+                <input type="checkbox" name="categories[]" value="Mollusca"/>Molluscs<br />
+                <input type="checkbox" name="categories[]" value="Protozoa"/>Protozoa<br />
+                <input type="checkbox" name="categories[]" value="Fungi"/>Fungi<br />
+                <input type="checkbox" name="categories[]" value="Insecta"/>Insects<br />
+                <input type="checkbox" name="categories[]" value="Arachnida"/>Arachnids<br />
+            </div>
             <button type="submit">Compare</button>
         </form>
         <div id="loader"><img src="images/giphy.webp" /></div>
@@ -53,11 +72,13 @@
         <div id="creature-container"></div>
     </div>
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", function () { 
             const loader = document.getElementById('loader');
             const searchForm = document.getElementById('search-form');
             const creatureContainer = document.getElementById('creature-container');
             const total = document.getElementById('total');
+
+            
 
             loader.style.display = 'none';
 
@@ -68,26 +89,25 @@
                 creatureContainer.innerHTML = '';
                 total.innerHTML = '';
 
-                let here = new URL(document.getElementById('here').value);
-                let there = new URL(document.getElementById('there').value);
-                here = here.search.substring(1);
-                there = there.search.substring(1);
+                //let here = new URL(document.getElementById('here').value);
+                //let there = new URL(document.getElementById('there').value);
+                //here = here.search.substring(1);
+                //there = there.search.substring(1);
 
-                //https://www.inaturalist.org/observations?nelat=29.9268581&nelng=-90.00795199999999&swlat=29.847849&swlng=-90.0458979
-
-                console.log('Loading the guys');
+                let here = document.getElementById('here').value;
+                let there = document.getElementById('there').value;
+                let categories = [...document.querySelectorAll('input[name="categories[]"]:checked')].map(el => el.value).join(',');
 
                 let htmlContent = '';
 
-                let url = 'http://199.19.74.165:3000/compare-creatures/' + here + '/' + there;
+                //let url = 'http://199.19.74.165:3000/compare-creatures/' + here + '/' + there;
+                let url = 'http://localhost:3000/compare-creatures/' + here + '/' + there + '/' + categories;
                 console.log(url);
                 fetch(url)
                     .then(response => response.json())
                     .then(creatures => {
-                        console.log('The guys are loaded!');
-
                         loader.style.display = 'none';
-                        total.innerHTML = '<h2>' + creatures.length + ' Results</h2>';
+                        total.innerHTML = '<h2>' + creatures.length + ' Species Appear In ' + there + ' But Not In ' + here + '</h2>';
 
                         creatures.forEach(creature => {
                             htmlContent += `
@@ -95,11 +115,11 @@
                             if (creature.common_name) {
                                 htmlContent += `
                             <h2>${creature.common_name}</h2>
-                            <p><i>${creature.scientific_name}</i></p>
+                            <p><i>${creature.scientific_name}</i> | ${creature.count} observations</p>
                     `;
                             } else {
                                 htmlContent += `
-                            <h2><i>${creature.scientific_name}</i></h2>
+                            <h2><i>${creature.scientific_name}</i> | ${creature.count} observations</h2>
                             `;
                             }
                             htmlContent += `
@@ -112,6 +132,10 @@
                     });
             })
         })
+
+        async function getCoordinatesFromZip(zip) {
+
+        }
     </script>
 </body>
 
