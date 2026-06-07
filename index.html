@@ -100,8 +100,8 @@
 
                 let htmlContent = '';
 
-                //let url = 'http://199.19.74.165:3000/compare-creatures/' + here + '/' + there;
-                let url = 'http://localhost:3000/compare-creatures/' + here + '/' + there + '/' + categories;
+                let url = 'http://199.19.74.165:3000/compare-creatures/' + here + '/' + there + '/' + categories;
+                //let url = 'http://localhost:3000/compare-creatures/' + here + '/' + there + '/' + categories;
                 console.log(url);
                 fetch(url)
                     .then(response => response.json())
