@@ -49,8 +49,11 @@
     <div id="content">
         <form id="search-form">
             <div class="instructions">Enter two zip codes to compare: </div>
-            <input type="text" id="here" placeholder="Here">
-            <input type="text" id="there" placeholder="There">
+            <input type="text" id="here" placeholder="Here" maxlength="5" pattern="[0-9]{5}">
+            <input type="text" id="there" placeholder="There" maxlength="5" pattern="[0-9]{5}">
+            <div>
+                <label for="radius">Radius In Miles: </label><input type="text" id="radius" placeholder="5" maxlength="3" pattern="[0-9]{3}">
+            </div>
             <div>
                 <div><label for="categories">Search Only These Categories:</label></div>
                 <input type="checkbox" name="categories[]" value="Aves"/>Birds<br />
@@ -78,8 +81,6 @@
             const creatureContainer = document.getElementById('creature-container');
             const total = document.getElementById('total');
 
-            
-
             loader.style.display = 'none';
 
             searchForm.addEventListener('submit', function (event) {
@@ -96,11 +97,12 @@
 
                 let here = document.getElementById('here').value;
                 let there = document.getElementById('there').value;
+                let radius = document.getElementById('radius').value || 5;
                 let categories = [...document.querySelectorAll('input[name="categories[]"]:checked')].map(el => el.value).join(',');
 
                 let htmlContent = '';
 
-                let url = 'http://199.19.74.165:3000/compare-creatures/' + here + '/' + there + '/' + categories;
+                let url = 'http://199.19.74.165:3000/compare-creatures/' + here + '/' + there + '/' + radius + '/' + categories;
                 //let url = 'http://localhost:3000/compare-creatures/' + here + '/' + there + '/' + categories;
                 console.log(url);
                 fetch(url)
