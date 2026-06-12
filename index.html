@@ -259,8 +259,8 @@ body {
 
                 let htmlContent = '';
 
-                //let url = 'https://www.jasonjbru.net/api/compare-creatures/' + here + '/' + there + '/' + radius + '/' + categories;
-                let url = 'http://localhost:3000/compare-creatures/' + here + '/' + there + '/' + radius + '/' + categories;
+                let url = 'https://www.jasonjbru.net/api/compare-creatures/' + here + '/' + there + '/' + radius + '/' + categories;
+                //let url = 'http://localhost:3000/compare-creatures/' + here + '/' + there + '/' + radius + '/' + categories;
                 console.log(url);
                 fetch(url)
                     .then(response => response.json())
