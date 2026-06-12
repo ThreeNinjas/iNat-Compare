@@ -259,19 +259,20 @@ body {
 
                 let htmlContent = '';
 
-                let url = 'https://www.jasonjbru.net/api/compare-creatures/' + here + '/' + there + '/' + radius + '/' + categories;
-                //let url = 'http://localhost:3000/compare-creatures/' + here + '/' + there + '/' + categories;
+                //let url = 'https://www.jasonjbru.net/api/compare-creatures/' + here + '/' + there + '/' + radius + '/' + categories;
+                let url = 'http://localhost:3000/compare-creatures/' + here + '/' + there + '/' + radius + '/' + categories;
                 console.log(url);
                 fetch(url)
                     .then(response => response.json())
-                    .then(creatures => {
+                    .then(creatures => { 
                         window.creatures = creatures;
                         loader.style.display = 'none';
                         total.style.display = 'flex';
                         creatureContainer.style.display = 'block';
-                        total.innerHTML = '<h2>' + creatures.length + ' Species Appear In ' + there + ' But Not In ' + here + '</h2>';
+                        //total.innerHTML = '<h2>' + creatures.results.length + ' Species Appear In ' + there + ' But Not In ' + here + '</h2>';
+                        total.innerHTML = `<h2>${creatures.results.length} Species Appear In <a href="${creatures.locales.there.inatLink}" target="_blank">${there}</a> But Not In <a href="${creatures.locales.here.inatLink}" target="_blank">${here}</a></h2>`;
 
-                        creatures.forEach(creature => {
+                        creatures.results.forEach(creature => {
                             const imageUrl = window.innerWidth >= 768
                             ? creature.image_url.replace('medium', 'large')
                             : creature.image_url;
