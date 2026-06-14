@@ -136,6 +136,13 @@ body {
             </span>
             <div>
                 <label for="radius">Radius In Miles: </label><input type="text" id="radius" placeholder="5" maxlength="3" pattern="[0-9]{1,3}">
+                
+            </div>
+            <div style="padding-top: 10px;">
+                <label>
+                    <input name id="current" type="checkbox" role="switch" />
+                    Only show species active now
+                </label>
             </div>
             <div class="cats-of-gory">
                 <div><label for="categories">Search Only These Categories (Optional):</label></div>
@@ -218,6 +225,8 @@ body {
         }
 
         document.addEventListener("DOMContentLoaded", function () { 
+            let params = new URLSearchParams(document.location.search);
+            const testing = params.get("testing");
             const loader = document.getElementById('loader');
             const searchForm = document.getElementById('search-form');
             const creatureContainer = document.getElementById('creature-container');
@@ -247,19 +256,21 @@ body {
                 creatureContainer.innerHTML = '';
                 total.innerHTML = '';
 
-                //let here = new URL(document.getElementById('here').value);
-                //let there = new URL(document.getElementById('there').value);
-                //here = here.search.substring(1);
-                //there = there.search.substring(1);
-
                 let here = document.getElementById('here').value;
                 let there = document.getElementById('there').value;
                 let radius = document.getElementById('radius').value || 5;
+                let current = document.getElementById('current').checked; 
                 let categories = [...document.querySelectorAll('input[name="categories[]"]:checked')].map(el => el.value).join(',');
 
                 let htmlContent = '';
 
-                let url = 'https://www.jasonjbru.net/api/compare-creatures/' + here + '/' + there + '/' + radius + '/' + categories;
+                let basedUrl = testing ? 'http://localhost:3000/' : 'https://www.jasonjbru.net/api/';
+
+                let url = basedUrl + 'compare-creatures/' + here + '/' + there + '/' + radius + '/' + categories;
+                if (current) {
+                    url += '?current=1'
+                }
+
                 //let url = 'http://localhost:3000/compare-creatures/' + here + '/' + there + '/' + radius + '/' + categories;
                 console.log(url);
                 fetch(url)
@@ -269,8 +280,29 @@ body {
                         loader.style.display = 'none';
                         total.style.display = 'flex';
                         creatureContainer.style.display = 'block';
-                        //total.innerHTML = '<h2>' + creatures.results.length + ' Species Appear In ' + there + ' But Not In ' + here + '</h2>';
-                        total.innerHTML = `<h2>${creatures.results.length} Species Appear In <a href="${creatures.locales.there.inatLink}" target="_blank">${there}</a> But Not In <a href="${creatures.locales.here.inatLink}" target="_blank">${here}</a></h2>`;
+                        
+                        let currentString = '';
+
+                        if (creatures.current == 1) {
+                            currentString = ' During ';
+                            let month = new URLSearchParams(creatures.locales.there.inatLink).get("month");
+                            
+                            if (month.includes(',')) {
+                                let months = month.split(',').map(Number);
+                                currentString += `${getMonthFromInt(months[0])} and ${getMonthFromInt(months[1])}`;
+                            } else {
+                                currentString += getMonthFromInt(month);
+                            }
+
+                            console.log(currentString);
+                        }
+                        console.log(currentString); 
+                        total.innerHTML = `
+                            <h2>
+                                ${creatures.results.length} Species Appear In <a href="${creatures.locales.there.inatLink}" target="_blank">${there}</a> 
+                                But Not In <a href="${creatures.locales.here.inatLink}" target="_blank">${here}</a>
+                                ${currentString}
+                            </h2>`;
 
                         creatures.results.forEach(creature => {
                             const imageUrl = window.innerWidth >= 768
@@ -290,8 +322,21 @@ body {
             })
         })
 
-        async function getCoordinatesFromZip(zip) {
-
+        function getMonthFromInt(month) {
+            return [
+                'January',
+                'February',
+                'March',
+                'April',
+                'May',
+                'June',
+                'July',
+                'August',
+                'September',
+                'October',
+                'November',
+                'December'
+            ][month - 1];
         }
     </script>
 </body>
